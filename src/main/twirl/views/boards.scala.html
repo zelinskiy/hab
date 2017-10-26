@@ -1,9 +1,10 @@
 @import com.example.data.Board
 @import org.squeryl.Query
 @(boards:Query[Board])
-@layouts.html.default("Scalatra: a tiny, Sinatra-like web framework for Scala", "Welcome to Scalatra"){
+@layouts.html.default("All Boards"){
 @for(b <- boards){
-	    <p>@b.title</p>
-	    }
+	  <h3>@b.name  (@b.id)</h3>
+	  <p>@b.description</p>
+	  }
 	  
 }

@@ -1,5 +1,8 @@
-@(id:String)
-@layouts.html.default("Scalatra: a tiny, Sinatra-like web framework for Scala", "Welcome to Scalatra"){
-  <h1>Board @id</h1>
-  <p>Hello, Twirl!</p>
+@(board:com.example.data.Board)
+@layouts.html.default("Board"){
+<h1>Board @board.name (@board.id)</h1>
+@board.description match {
+case Some(text) => { <p>@text</p> }
+case None => { <p>No description provided</p> }
+}
 }

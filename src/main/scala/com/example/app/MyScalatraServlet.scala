@@ -2,6 +2,7 @@ package com.example.app
 
 import org.scalatra._
 import org.squeryl.PrimitiveTypeMode._
+import scala.util.Try
 
 import com.example.data._
 
@@ -13,7 +14,13 @@ class MyScalatraServlet extends ScalatraServlet
   }
 
   get("/board/:id") {
-    views.html.board(params("id"))
+    Try(params("id").toLong).toOption match {
+      case Some(id) => {
+        val b = HubDb.boards.where(b => b.id === id).single
+        views.html.board(b)
+      }
+      case None => notFound(_)
+    }
   }
 
   get("/boards"){
@@ -22,7 +29,7 @@ class MyScalatraServlet extends ScalatraServlet
 
   get("/create-db") {
     contentType = "text/html"
-
+    HubDb.drop
     HubDb.create
     redirect("/boards")
   }
