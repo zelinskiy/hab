@@ -1,0 +1,19 @@
+@(error: String)
+@layouts.html.default("Register to Hub"){
+
+<p>Error: @error<p>
+
+<form action="/register" method="post">
+  Name:<br>
+  <input type="text" name="name" value="user1">
+  <br>
+  Email:<br>
+  <input type="text" name="email" value="test@@gmail.com">
+  <br>
+  Password:<br>
+  <input type="text" name="pass" value="123456">
+  <br><br>
+  <input type="submit" value="Register">
+</form>
+
+}
