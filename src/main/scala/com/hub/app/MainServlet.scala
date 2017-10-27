@@ -33,7 +33,10 @@ class MainServlet extends ScalatraServlet
     views.html.boards(from (HubDb.boards) (select(_)))
   }
 
-  
-
+  get("/create-db") {
+    contentType = "text/html"
+    HubDb.create
+    redirect("/boards")
+  }
 
 }

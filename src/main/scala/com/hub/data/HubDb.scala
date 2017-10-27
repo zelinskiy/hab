@@ -10,9 +10,10 @@ import org.squeryl.KeyedEntity
 case class Board(
   val id: Long,
   val name: String,
-  val description: Option[String])
+  val description: Option[String],
+  val imgPath: Option[String])
     extends KeyedEntity[Long]{
-  def this() = this(0,"",None)
+  def this() = this(0,"",None,None)
 }
 
 case class User(

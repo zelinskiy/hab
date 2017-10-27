@@ -1,6 +1,6 @@
 val ScalatraVersion = "2.5.3"
 
-organization := "com.example"
+organization := "com.hub"
 
 name := "hab"
 

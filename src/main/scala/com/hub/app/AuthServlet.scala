@@ -53,11 +53,4 @@ class AuthServlet extends ScalatraServlet
     views.html.login(None)
   }
 
-  get("/create-db") {
-    contentType = "text/html"
-    HubDb.create
-    redirect("/boards")
-  }
-
-
 }

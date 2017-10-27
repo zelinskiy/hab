@@ -1,2 +1,10 @@
-* MySQL database
-* Bootstrap
+* Article : Board : Category
+* New Category
+* New Board
+* New Article
+* Subscriptions
+* Sort Articles
+* Photos upload
+* Edit profile
+* Settings
+* Options
