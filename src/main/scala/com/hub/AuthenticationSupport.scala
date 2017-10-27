@@ -1,4 +1,4 @@
-package com.example
+package com.hub
 
 import org.scalatra.auth.strategy.{BasicAuthStrategy, BasicAuthSupport}
 import org.scalatra.auth.{ScentrySupport, ScentryConfig}
@@ -7,7 +7,7 @@ import javax.servlet.http.{HttpServletResponse, HttpServletRequest}
 import org.squeryl.PrimitiveTypeMode._
 import scala.util.Try
 
-import com.example.data._
+import com.hub.data._
 
 class OurBasicAuthStrategy(protected override val app: ScalatraBase, realm: String)
   extends BasicAuthStrategy[User](app, realm) {

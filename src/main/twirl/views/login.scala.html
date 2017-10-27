@@ -1,7 +1,14 @@
-@(error: String)
+@(error: Option[String])
 @layouts.html.default("Login to Hub"){
 
-<p>Error: @error<p>
+@error match {
+case Some(text) => {
+<div class="alert alert-danger">
+  <strong>Error!</strong> @error
+</div>
+}
+case None => { }
+}
 
 <form action="/login" method="post">
   Email:<br>

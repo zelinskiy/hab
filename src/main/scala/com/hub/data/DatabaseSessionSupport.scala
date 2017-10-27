@@ -1,4 +1,4 @@
-package com.example.data
+package com.hub.data
 
 import org.squeryl.Session
 import org.squeryl.SessionFactory
