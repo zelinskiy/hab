@@ -1,4 +1,7 @@
-@(article:com.hub.data.Article)
+@import com.hub.data.{Article, Category}
+@import org.squeryl.Query
+
+@(article:Article)(implicit cats: Query[Category])
 @layouts.html.default(article.name.toString){
 
 <h2>@article.name</h2>

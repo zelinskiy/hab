@@ -3,6 +3,7 @@ package com.hub.app
 import org.scalatra._
 import org.squeryl.PrimitiveTypeMode._
 import scala.util.{Try, Success, Failure}
+import org.squeryl.Query
 
 import com.hub.data._
 import com.hub.{MyUtils, AuthenticationSupport}
@@ -10,6 +11,8 @@ import com.hub.{MyUtils, AuthenticationSupport}
 class AuthServlet extends ScalatraServlet
     with DatabaseSessionSupport
     with AuthenticationSupport{
+
+  implicit val cats: Query[Category] = HubDb.categories
 
   get("/login"){
     views.html.login(None)
@@ -51,7 +54,7 @@ class AuthServlet extends ScalatraServlet
 
   get("/logout"){
     scentry.logout
-    views.html.login(None)
+    redirect("/auth/login")
   }
 
 }

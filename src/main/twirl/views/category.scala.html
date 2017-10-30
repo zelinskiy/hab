@@ -1,7 +1,12 @@
-@(category:com.hub.data.Category)
+@import com.hub.data.{User, Category}
+@import org.squeryl.Query
+
+@(category:Category)(implicit cats: Query[Category])
+
 @layouts.html.default(category.name){
 
 <h2>@category.name</h2>
+<a href="/board/new">New</a>
 
 <br/>
 <div class="row">
@@ -11,7 +16,7 @@
       @b.imgPath match {
         case Some(i) => { <img src="/rivendell.jpg" class="img-responsive" alt="Cinque Terre"> }
         case None => {} }
-      <h3>@b.name</h3>      
+      <h3><a href="/board/@b.id">@b.name</a></h3>      
     </div>
   </div> 
 }

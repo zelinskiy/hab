@@ -1,6 +1,6 @@
 @import org.squeryl.Query
 @import com.hub.data.Category
-@(categories:Query[Category])
+@(categories:Query[Category])(implicit cats: Query[Category])
 @layouts.html.default("All Categories"){
 
 @for(c <- categories){

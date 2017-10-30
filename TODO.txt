@@ -1,6 +1,5 @@
-* New Board
-* New Article
 * My Articles
+* Split into multiple servlets
 * Subscriptions
 * Sort Articles
 * Photos upload

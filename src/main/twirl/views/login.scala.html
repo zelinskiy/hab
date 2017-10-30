@@ -1,4 +1,4 @@
-@(error: Option[String])
+@(error: Option[String])(implicit cats: org.squeryl.Query[com.hub.data.Category])
 @layouts.html.default("Login to Hub"){
 
 @error match {

@@ -1,7 +1,12 @@
-@(board: com.hub.data.Board)
+@import com.hub.data.{Board, Category}
+@import org.squeryl.Query
+
+@(board: Board)(implicit cats: Query[Category])
 @layouts.html.default(board.name){
 
 <h2>@board.name</h2>
+
+<a href="/article/new/@board.id">New article</a>
 
 <div class="dropdown">
   <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Sort by
