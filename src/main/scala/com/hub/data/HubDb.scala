@@ -12,24 +12,33 @@ import org.squeryl.KeyedEntity
 case class Article(
   val id: Long,
   val boardId: Long,
+  val userId: Long,
   val name: String,
   val body: String,
   val created: Date,
   val imgPath: Option[String])
     extends KeyedEntity[Long]{
-  def this() = this(0,0,"","",new Date(0),None)
-  lazy val board: ManyToOne[Board] = HubDb.articlesToBoards.right(this)
+  def this() = this(0,0,0,"","",new Date(0),None)
+  lazy val board: ManyToOne[Board] =
+    HubDb.articlesToBoards.right(this)
+  lazy val user: ManyToOne[User] =
+    HubDb.articlesToUsers.right(this)
 }
 
 case class Board(
   val id: Long,
   val categoryId: Long,
+  val userId: Long,
   val name: String,
   val imgPath: Option[String])
     extends KeyedEntity[Long]{
-  def this() = this(0,0,"",None)
-  lazy val articles: OneToMany[Article] = HubDb.articlesToBoards.left(this)
-  lazy val category: ManyToOne[Category] = HubDb.boardsToCategories.right(this)
+  def this() = this(0,0,0,"",None)
+  lazy val articles: OneToMany[Article] =
+    HubDb.articlesToBoards.left(this)
+  lazy val category: ManyToOne[Category] =
+    HubDb.boardsToCategories.right(this)
+  lazy val user: ManyToOne[User] =
+    HubDb.boardsToUsers.right(this)
 }
 
 case class Category(
@@ -37,18 +46,24 @@ case class Category(
   val name: String)
     extends KeyedEntity[Long]{
   def this() = this(0,"")
-  lazy val boards: OneToMany[Board] = HubDb.boardsToCategories.left(this)
+  lazy val boards: OneToMany[Board] =
+    HubDb.boardsToCategories.left(this)
 }
 
 case class User(
   val id: Long,
   val name: String,
+  val about: String,
   val email: String,
   val passHash: String
 )
     extends KeyedEntity[Long]{
-  def this() = this(0,"username",
+  def this() = this(0,"username","nothing special",
     "username@mail.com","1a2b3c4d5e")
+  lazy val articles: OneToMany[Article] =
+    HubDb.articlesToUsers.left(this)
+  lazy val boards: OneToMany[Board] =
+    HubDb.boardsToUsers.left(this)
 }
  
 object HubDb extends Schema {
@@ -71,6 +86,14 @@ object HubDb extends Schema {
   val boardsToCategories =
     oneToManyRelation(categories, boards).
       via((c,b) => c.id === b.categoryId)
+
+  val articlesToUsers =
+    oneToManyRelation(users, articles).
+      via((u,a) => u.id === a.userId)
+
+  val boardsToUsers =
+    oneToManyRelation(users, boards).
+      via((u,b) => u.id === b.userId)
 
   on(users)(u => declare(
     u.id is autoIncremented("users_id_seq"),

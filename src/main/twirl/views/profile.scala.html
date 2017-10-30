@@ -1,0 +1,10 @@
+@import com.hub.data.{Category, User}
+@import org.squeryl.Query
+
+@(me: User)(implicit cats: Query[Category])
+@layouts.html.default("Login to Hub"){
+
+<p>@me.name</p>
+<p>@me.email</p>
+
+}

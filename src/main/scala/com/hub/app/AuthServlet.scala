@@ -41,6 +41,7 @@ class AuthServlet extends ScalatraServlet
     Try(HubDb.users.insert(
       new User(0,
         params("name"),
+        params("about"),
         params("email"),
         MyUtils.sha256(params("pass")))))
       match {
@@ -55,6 +56,13 @@ class AuthServlet extends ScalatraServlet
   get("/logout"){
     scentry.logout
     redirect("/auth/login")
+  }
+
+  get("/create-db") {
+    HubDb.create
+    for (c <- List("C++", "HASKELL", "SCALA"))
+      HubDb.categories.insert(new Category(0,c))
+    redirect("/")
   }
 
 }

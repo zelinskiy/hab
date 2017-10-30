@@ -15,12 +15,19 @@ class MainServlet extends ScalatraServlet
 
   implicit val cats: Query[Category] = HubDb.categories
 
+  def auth = {
+    if(!scentry.isAuthenticated) redirect("/auth/login")
+  }
+
+  before(){
+    auth
+  }
+
   get("/") {
     redirect("/categories")
   }
 
   get("/article/:id") {
-    scentry.authenticate("Basic")
     Try(HubDb.articles
       .where(a => a.id === params("id").toLong)
       .single)
@@ -42,11 +49,12 @@ class MainServlet extends ScalatraServlet
       case Failure(_) =>
         views.html.newArticle(
           Some("Can't find board " + params("bid")),
-          params("board"))
+          params("bid"))
       case Success(b) => {
         Try(HubDb.articles.insert(
           new Article(0,
             b.id,
+            scentry.user.id,
             params("title"),
             params("body"),
             new Date,
@@ -63,7 +71,6 @@ class MainServlet extends ScalatraServlet
 
 
   get("/board/:id") {
-    scentry.authenticate("Basic")
     Try(HubDb.boards
       .where(b => b.id === params("id").toLong)
       .single)
@@ -71,6 +78,13 @@ class MainServlet extends ScalatraServlet
       case Success(b) => views.html.board(b)
       case Failure(e) => notFound(e)
     }
+  }
+
+  get("/board/my"){
+    views.html.myBoards(
+      from (HubDb.boards)(b =>
+        where(b.id === scentry.user.id)
+        select(b)))
   }
 
   get("/board/new"){
@@ -87,22 +101,26 @@ class MainServlet extends ScalatraServlet
           Some("Can't find category " + params("category")))
       case Success(c) => {
         Try(HubDb.boards
-          .insert(new Board(0, c.id, params("name"), None)))
+          .insert(
+            new Board(0,
+              c.id,
+              scentry.user.id,
+              params("name"),
+              None)))
           match {
           case Failure(e) => views.html.newBoard(Some(e.getMessage))
-          case Success(b) => redirect("/board/" + c.id.toString)
+          case Success(b) => redirect("/board/" + b.id.toString)
         }
       }
     }
   }
 
   get("/category/:id") {
-    scentry.authenticate("Basic")
     Try(HubDb.categories
       .where(c => c.id === params("id").toLong)
       .single)
       match {
-      case Success(b) => views.html.category(b)
+      case Success(c) => views.html.category(c)
       case Failure(e) => notFound(e)
     }
   }
@@ -113,10 +131,9 @@ class MainServlet extends ScalatraServlet
     )
   }
 
-  get("/create-db") {
-    contentType = "text/html"
-    HubDb.create
-    redirect("/")
+  get("/me"){
+    views.html.profile(scentry.user)
   }
 
+  
 }
