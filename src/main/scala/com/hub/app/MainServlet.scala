@@ -11,32 +11,38 @@ class MainServlet extends ScalatraServlet
     with DatabaseSessionSupport
     with AuthenticationSupport{
 
-  def auth {
-    if(!scentry.isAuthenticated) redirect("/auth/login")
+  get("/") {
+    redirect("/categories")
   }
 
-  get("/") {
-    auth
-    redirect("/boards")
+  get("/article/:id") {
+    scentry.authenticate("Basic")
+    views.html.hello()
   }
 
   get("/board/:id") {
-    auth
+    scentry.authenticate("Basic")
     Try(HubDb.boards.where(b => b.id === params("id").toLong).single) match {
       case Success(b) => views.html.board(b)
       case Failure(e) => notFound(e)
     }
   }
 
-  get("/boards") {
-    auth
-    views.html.boards(from (HubDb.boards) (select(_)))
+  get("/category/:id") {
+    scentry.authenticate("Basic")
+    views.html.hello()
+  }
+
+  get("/categories") {
+    views.html.categories(
+      from (HubDb.categories) (select(_))
+    )
   }
 
   get("/create-db") {
     contentType = "text/html"
     HubDb.create
-    redirect("/boards")
+    redirect("/")
   }
 
 }

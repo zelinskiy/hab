@@ -1,7 +1,6 @@
-* Article : Board : Category
-* New Category
 * New Board
 * New Article
+* My Articles
 * Subscriptions
 * Sort Articles
 * Photos upload

@@ -1,8 +1,33 @@
-@(board:com.hub.data.Board)
-@layouts.html.default("Board"){
-<h1>Board @board.name (@board.id)</h1>
-@board.description match {
-case Some(text) => { <p>@text</p> }
-case None => { <p>No description provided</p> }
+@(board: com.hub.data.Board)
+@layouts.html.default(board.name){
+
+<h2>@board.name</h2>
+
+<div class="dropdown">
+  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Sort by
+    <span class="caret"></span></button>
+  <ul class="dropdown-menu">
+    <li><a href="#">Date</a></li>
+    <li><a href="#">Name</a></li>
+    <li><a href="#">Subs</a></li>
+  </ul>
+</div>
+
+<br/>
+<div class="row">
+@for(a <- board.articles){
+  <div class="col-lg-6">
+    <div class="well">
+      @a.imgPath match {
+        case Some(i) => { <img src="/rivendell.jpg" class="img-responsive" alt="Cinque Terre"> }
+        case None => {<img src="/rivendell.jpg" class="img-responsive" alt="Cinque Terre">}
+        }
+      <h3>@a.name</h3>
+      <hr/>
+      <p>@a.body</p>
+    </div>
+  </div> 
 }
+</div>
+
 }

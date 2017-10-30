@@ -1,7 +1,7 @@
 package com.hub
 
 import org.scalatra.auth.strategy.{BasicAuthStrategy, BasicAuthSupport}
-import org.scalatra.auth.{ScentrySupport, ScentryConfig}
+import org.scalatra.auth.{ScentrySupport, ScentryConfig, ScentryStrategy}
 import org.scalatra.{ScalatraBase}
 import javax.servlet.http.{HttpServletResponse, HttpServletRequest}
 import org.squeryl.PrimitiveTypeMode._
@@ -9,13 +9,17 @@ import scala.util.Try
 
 import com.hub.data._
 
-class OurBasicAuthStrategy(protected override val app: ScalatraBase, realm: String)
-  extends BasicAuthStrategy[User](app, realm) {
+class OurBasicAuthStrategy(
+  protected override val app: ScalatraBase,
+  realm: String)
+  extends ScentryStrategy[User]{
 
-  protected def validate(userName: String, password: String)(implicit request: HttpServletRequest, response: HttpServletResponse): Option[User] = Try(HubDb.users
-    .where(u => u.name === userName)
-    .where(u => MyUtils.sha256(password) === u.passHash)
-    .single).toOption
+  def authenticate() (implicit request: HttpServletRequest, response: HttpServletResponse): Option[User] =
+    Try(HubDb.users
+    .where(u => u.email === request.getParameter("email"))
+    .where(u => MyUtils.sha256(request.getParameter("pass")) === u.passHash)
+      .single).toOption
+      
   
   protected def getUserId(user: User)(implicit request: HttpServletRequest, response: HttpServletResponse): String = user.id.toString
 }
@@ -32,7 +36,6 @@ trait AuthenticationSupport extends ScentrySupport[User] {
   protected def toSession   = { case usr: User => usr.id.toString }
 
   protected val scentryConfig = (new ScentryConfig {}).asInstanceOf[ScentryConfiguration]
-
 
   override protected def configureScentry = {
     scentry.unauthenticated {

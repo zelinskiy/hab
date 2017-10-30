@@ -15,19 +15,18 @@ class AuthServlet extends ScalatraServlet
     views.html.login(None)
   }
 
+  get("/logged"){
+    scentry.isAuthenticated
+  }
+
   post("/login"){
-    Try(HubDb.users
-      .where(u => u.email === params("email"))
-      .where(u => u.passHash
-        === MyUtils.sha256(params("pass")))
-      .single)
-      match {
-      case Success(u) => {
+    scentry.authenticate("Basic") match {
+      case Some(u) => {
         scentry.authenticate("Basic")
         redirect("/")
       }
-      case Failure(e) =>
-        views.html.login(Some(e.getMessage))
+      case None =>
+        views.html.login(Some("Cant login"))
     }
   }
 
@@ -42,7 +41,9 @@ class AuthServlet extends ScalatraServlet
         params("email"),
         MyUtils.sha256(params("pass")))))
       match {
-      case Success(u) => redirect("/")
+      case Success(u) => {
+        redirect("/auth/login")
+      }
       case Failure(e) =>
         views.html.register(Some(e.getMessage))
     }    

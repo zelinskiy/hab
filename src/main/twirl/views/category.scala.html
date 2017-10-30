@@ -1,0 +1,20 @@
+@(category:com.hub.data.Category)
+@layouts.html.default(category.name){
+
+<h2>@category.name</h2>
+
+<br/>
+<div class="row">
+@for(b <- category.boards){
+  <div class="col-lg-6">
+    <div class="well">
+      @b.imgPath match {
+        case Some(i) => { <img src="/rivendell.jpg" class="img-responsive" alt="Cinque Terre"> }
+        case None => {} }
+      <h3>@b.name</h3>      
+    </div>
+  </div> 
+}
+</div>
+
+}

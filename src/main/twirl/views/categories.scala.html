@@ -1,0 +1,9 @@
+@import org.squeryl.Query
+@import com.hub.data.Category
+@(categories:Query[Category])
+@layouts.html.default("All Categories"){
+
+@for(c <- categories){
+<a href="/category/@c.id">@c.name</a>
+}	  
+}
