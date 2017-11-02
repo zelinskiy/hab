@@ -5,21 +5,28 @@
 
 @layouts.html.default(category.name){
 
-<h2>@category.name</h2>
-<a href="/board/new">New</a>
+<h2>Category: @{category.name}(<a href="/board/new/@category.id">+</a>)</h2>
+
+<div class="dropdown">
+  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Sort by
+    <span class="caret"></span></button>
+  <ul class="dropdown-menu">
+    <li><a href="/category/@category.id?order=date">Date</a></li>
+    <li><a href="/category/@category.id?order=name">Name</a></li>
+  </ul>
+</div>
 
 <br/>
 <div class="row">
 @for(b <- category.boards){
-  <div class="col-lg-6">
+  <div class="col-lg-4">
     <div class="well">
       @b.imgPath match {
         case Some(i) => { <img src="/rivendell.jpg" class="img-responsive" alt="Cinque Terre"> }
         case None => {} }
-    <h3><a href="/board/@b.id">@b.name</a></h3>
-    <p><a href="/board/@b.id/subscribe">Subscribe</a></p>
-    <p><a href="/board/@b.id/unsubscribe">Unsubscribe</a></p>
-    <p>Subscribtions: @b.subscribers.count(s => true)</p>
+    <h3><a href="/board/@b.id">@b.name</a>
+      (<a href="/board/@b.id/sub"><i class="fa fa-flag"></i> @b.subscribers.size</a>)
+    </h3>
     </div>
   </div> 
 }

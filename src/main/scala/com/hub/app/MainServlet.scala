@@ -137,18 +137,19 @@ class MainServlet extends ScalatraServlet
         select(b)))
   }
 
-  get("/board/new"){
-    views.html.newBoard(None)
+  get("/board/new/:cid"){
+    views.html.newBoard(None, params("cid"))
   }
 
-  post("/board/new"){
+  post("/board/new/:cid"){
     Try(HubDb.categories
-      .where(c => c.name === params("category"))
+      .where(c => c.id === params("cid").toLong)
       .single)
       match {
       case Failure(_) =>
         views.html.newBoard(
-          Some("Can't find category " + params("category")))
+          Some("Can't find category " + params("category")),
+          params("cid"))
       case Success(c) => {
         Try(HubDb.boards
           .insert(
@@ -158,7 +159,8 @@ class MainServlet extends ScalatraServlet
               params("name"),
               None)))
           match {
-          case Failure(e) => views.html.newBoard(Some(e.getMessage))
+          case Failure(e) => views.html.newBoard(
+            Some(e.getMessage), params("cid"))
           case Success(b) => redirect("/board/" + b.id.toString)
         }
       }

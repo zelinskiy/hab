@@ -60,8 +60,8 @@ class AuthServlet extends ScalatraServlet
 
   get("/create-db") {
     HubDb.create
-    for (c <- List("C++", "HASKELL", "SCALA"))
-      HubDb.categories.insert(new Category(0,c))
+    HubDb.categories
+      .insert(new Category(0,"Programming"))
     redirect("/")
   }
 

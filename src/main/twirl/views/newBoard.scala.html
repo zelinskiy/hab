@@ -1,4 +1,4 @@
-@(error: Option[String])(implicit cats: org.squeryl.Query[com.hub.data.Category])
+@(error: Option[String], cid: String)(implicit cats: org.squeryl.Query[com.hub.data.Category])
 @layouts.html.default("New Board"){
 
 @error match {
@@ -10,12 +10,10 @@ case Some(text) => {
 case None => { }
 }
 
-<form action="/board/new" method="post">
+<form action="/board/new/@cid" method="post">
   Name:<br>
   <input type="text" name="name" value="Board1">
-  <br>
-  Category:<br>
-  <input type="text" name="category" value="Category1">  
+  <input type="hidden" name="cid" value="cid">  
   <br><br>
   <input type="button" color="red" value="Exit">
   <input type="submit" value="Save">
