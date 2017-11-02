@@ -69,21 +69,71 @@ class MainServlet extends ScalatraServlet
     }
   }
 
+  get("/article/my"){
+    views.html.articles(
+      from (HubDb.articles)(a =>
+        where(a.userId === scentry.user.id)
+        select(a)))
+  }
+
 
   get("/board/:id") {
+    val o = Article.getOrdering(params.get("order"))
     Try(HubDb.boards
       .where(b => b.id === params("id").toLong)
       .single)
       match {
-      case Success(b) => views.html.board(b)
+      case Success(b) =>
+        views.html.board(o, b)
       case Failure(e) => notFound(e)
     }
   }
 
+  get("/board/:id/subscribe") {
+    Try(HubDb.boards
+      .where(b => b.id === params("id").toLong)
+      .single
+      .subscribers
+      .associate(scentry.user))
+      match {
+      case Success(_) => redirect("/board/" + params("id"))
+      case Failure(e) => notFound(e)
+    }
+  }
+
+  get("/board/:id/unsubscribe") {
+    Try(HubDb.boards
+      .where(b => b.id === params("id").toLong)
+      .single
+      .subscribers
+      .dissociate(scentry.user))
+      match {
+      case Success(true) => redirect("/board/" + params("id"))
+      case Success(false) => notFound(_)
+      case Failure(e) => notFound(e)
+    }
+  }
+
+  get("/board/:id/subscribed") {
+    Try(HubDb.boardsSubscriptions
+      .where(s => s.userId === scentry.user.id
+        and s.boardId === params("id").toLong)
+    ).isSuccess
+  }
+
+  get("/board/subscriptions"){
+    views.html.boards(
+      "Subscriptions",
+      from(HubDb.boards)(b =>
+        where(scentry.user.id in b.subscribers.map(_.id))
+        select(b)))      
+  }
+
   get("/board/my"){
-    views.html.myBoards(
+    views.html.boards(
+      "My Boards",
       from (HubDb.boards)(b =>
-        where(b.id === scentry.user.id)
+        where(b.userId === scentry.user.id)
         select(b)))
   }
 

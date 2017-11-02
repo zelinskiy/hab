@@ -1,8 +1,7 @@
 * My Articles
 * Split into multiple servlets
-* Subscriptions
-* Sort Articles
 * Photos upload
 * Edit profile
 * Settings
 * Options
+* Return to where I requested after login

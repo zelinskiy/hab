@@ -2,12 +2,20 @@ package com.hub.data
 
 import org.squeryl.PrimitiveTypeMode._
 import org.squeryl.Schema
-import org.squeryl.dsl.{OneToMany, ManyToOne}
+import org.squeryl.dsl.{OneToMany, ManyToOne, CompositeKey2}
 import org.squeryl.annotations.Column
 import java.util.Date
 import java.sql.Timestamp
 import java.util.Date
 import org.squeryl.KeyedEntity
+
+object Article {
+  def getOrdering(m: Option[String]) =
+    (a1: Article, a2: Article) => m match {
+      case Some("date") => a1.created.compareTo(a2.created) == 1
+      case _ => a1.id.compareTo(a2.id) == 1
+    }
+}
 
 case class Article(
   val id: Long,
@@ -39,6 +47,8 @@ case class Board(
     HubDb.boardsToCategories.right(this)
   lazy val user: ManyToOne[User] =
     HubDb.boardsToUsers.right(this)
+  lazy val subscribers =
+    HubDb.boardsSubscriptions.right(this)
 }
 
 case class Category(
@@ -64,6 +74,16 @@ case class User(
     HubDb.articlesToUsers.left(this)
   lazy val boards: OneToMany[Board] =
     HubDb.boardsToUsers.left(this)
+  lazy val subscriptions =
+    HubDb.boardsSubscriptions.left(this)
+}
+
+case class Subscription(
+  val userId: Long,
+  val boardId: Long)
+    extends KeyedEntity[CompositeKey2[Long,Long]]{
+  def id = compositeKey(userId, boardId)
+  def this() = this(0,0)
 }
  
 object HubDb extends Schema {
@@ -77,7 +97,12 @@ object HubDb extends Schema {
   on(boards)(b => declare(
     b.id is autoIncremented("boards_id_seq")))
   on(categories)(c => declare(
-    c.id is autoIncremented("categories_id_seq")))
+    c.id is autoIncremented("categories_id_seq"))) 
+  on(users)(u => declare(
+    u.id is autoIncremented("users_id_seq"),
+    u.name is unique,
+    u.email is unique
+  ))
 
   val articlesToBoards =
     oneToManyRelation(boards, articles).
@@ -95,11 +120,10 @@ object HubDb extends Schema {
     oneToManyRelation(users, boards).
       via((u,b) => u.id === b.userId)
 
-  on(users)(u => declare(
-    u.id is autoIncremented("users_id_seq"),
-    u.name is unique,
-    u.email is unique
-  ))
+  val boardsSubscriptions =
+    manyToManyRelation(users, boards).
+      via[Subscription](
+        (u, b, s) => (u.id === s.userId, b.id === s.boardId))
 }
    
 

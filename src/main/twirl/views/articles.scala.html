@@ -1,0 +1,26 @@
+@import com.hub.data.{Board, Category, Article}
+@import org.squeryl.Query
+
+@(articles: Query[Article])(implicit cats: Query[Category])
+@layouts.html.default("My Articles"){
+
+<h2>My Articles</h2>
+
+<br/>
+<div class="row">
+  
+  @for(a <- articles){
+  <div class="col-lg-6">
+    <div class="well">
+      @a.imgPath match {
+        case Some(i) => { <img src="/rivendell.jpg" class="img-responsive" alt="Cinque Terre"> }
+        case None => {<img src="/rivendell.jpg" class="img-responsive" alt="Cinque Terre">}
+        }
+      <h3>@a.name</h3>
+      <hr/>
+      <p>@a.body</p>
+    </div>
+  </div> 
+}
+</div>
+}

@@ -1,7 +1,7 @@
-@import com.hub.data.{Board, Category}
+@import com.hub.data.{Board, Category, Article}
 @import org.squeryl.Query
 
-@(board: Board)(implicit cats: Query[Category])
+@(ordering:(Article, Article) => Boolean, board: Board)(implicit cats: Query[Category])
 @layouts.html.default(board.name){
 
 <h2>@board.name</h2>
@@ -12,15 +12,15 @@
   <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Sort by
     <span class="caret"></span></button>
   <ul class="dropdown-menu">
-    <li><a href="#">Date</a></li>
-    <li><a href="#">Name</a></li>
-    <li><a href="#">Subs</a></li>
+    <li><a href="/board/@board.id?order=date">Date</a></li>
+    <li><a href="/board/@board.id?order=name">Name</a></li>
   </ul>
 </div>
 
 <br/>
 <div class="row">
-@for(a <- board.articles){
+  
+  @for(a <- board.articles.toList.sortWith(ordering)){
   <div class="col-lg-6">
     <div class="well">
       @a.imgPath match {
@@ -34,5 +34,4 @@
   </div> 
 }
 </div>
-
 }

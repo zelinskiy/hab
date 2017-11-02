@@ -16,7 +16,10 @@
       @b.imgPath match {
         case Some(i) => { <img src="/rivendell.jpg" class="img-responsive" alt="Cinque Terre"> }
         case None => {} }
-      <h3><a href="/board/@b.id">@b.name</a></h3>      
+    <h3><a href="/board/@b.id">@b.name</a></h3>
+    <p><a href="/board/@b.id/subscribe">Subscribe</a></p>
+    <p><a href="/board/@b.id/unsubscribe">Unsubscribe</a></p>
+    <p>Subscribtions: @b.subscribers.count(s => true)</p>
     </div>
   </div> 
 }

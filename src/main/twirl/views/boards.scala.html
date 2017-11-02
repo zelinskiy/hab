@@ -1,11 +1,11 @@
 @import com.hub.data.{Board, Category}
 @import org.squeryl.Query
 
-@(boards: Query[Board])(implicit cats: Query[Category])
+@(heading:String, boards: Query[Board])(implicit cats: Query[Category])
 
-@layouts.html.default("My Boards"){
+@layouts.html.default(heading){
 
-<h2>My Boards</h2>
+<h2>@heading</h2>
 
 <br/>
 <div class="row">
