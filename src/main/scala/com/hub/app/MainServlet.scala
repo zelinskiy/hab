@@ -113,18 +113,14 @@ class MainServlet extends ScalatraServlet
   }
 
   get("/board/:id/subscribed") {
-    Try(HubDb.boardsSubscriptions
-      .where(s => s.userId === scentry.user.id
-        and s.boardId === params("id").toLong)
-    ).isSuccess
+    scentry.user.subscriptions.find(b => b.id == b.id.toLong)
   }
 
   get("/board/subscriptions"){
     views.html.boards(
       "Subscriptions",
-      from(HubDb.boards)(b =>
-        where(scentry.user.id in b.subscribers.map(_.id))
-        select(b)))      
+      scentry.user.subscriptions
+    )
   }
 
   get("/board/my"){
