@@ -76,7 +76,6 @@ class MainServlet extends ScalatraServlet
         select(a)))
   }
 
-
   get("/board/:id") {
     val o = Article.getOrdering(params.get("order"))
     Try(HubDb.boards
@@ -89,28 +88,27 @@ class MainServlet extends ScalatraServlet
     }
   }
 
-  get("/board/:id/subscribe") {
-    Try(HubDb.boards
-      .where(b => b.id === params("id").toLong)
-      .single
-      .subscribers
-      .associate(scentry.user))
+  get("/board/:id/sub") {
+    Try(HubDb.boardsSubscriptions
+      .where(s => s.boardId === params("id").toLong
+      and s.userId === scentry.user.id)
+      .single)
       match {
-      case Success(_) => redirect("/board/" + params("id"))
-      case Failure(e) => notFound(e)
-    }
-  }
-
-  get("/board/:id/unsubscribe") {
-    Try(HubDb.boards
-      .where(b => b.id === params("id").toLong)
-      .single
-      .subscribers
-      .dissociate(scentry.user))
-      match {
-      case Success(true) => redirect("/board/" + params("id"))
-      case Success(false) => notFound(_)
-      case Failure(e) => notFound(e)
+      case Success(s) => {
+        HubDb.boardsSubscriptions.delete(s.id)
+        redirect("/board/subscriptions")
+      }
+      case Failure(e) =>
+        Try(HubDb.boardsSubscriptions
+          .insert(new Subscription(
+            scentry.user.id,
+            params("id").toLong)))
+          match {
+            case Success(s) =>
+              redirect("/board/subscriptions")
+            case Failure(e) =>
+              notFound(e)
+          }
     }
   }
 
@@ -157,6 +155,7 @@ class MainServlet extends ScalatraServlet
               c.id,
               scentry.user.id,
               params("name"),
+              new Date,
               None)))
           match {
           case Failure(e) => views.html.newBoard(
@@ -168,11 +167,12 @@ class MainServlet extends ScalatraServlet
   }
 
   get("/category/:id") {
+    val o = Board.getOrdering(params.get("order"))
     Try(HubDb.categories
       .where(c => c.id === params("id").toLong)
       .single)
       match {
-      case Success(c) => views.html.category(c)
+      case Success(c) => views.html.category(o, c)
       case Failure(e) => notFound(e)
     }
   }
@@ -187,5 +187,7 @@ class MainServlet extends ScalatraServlet
     views.html.profile(scentry.user)
   }
 
-  
+  get("/overview"){
+    views.html.overview()
+  }  
 }

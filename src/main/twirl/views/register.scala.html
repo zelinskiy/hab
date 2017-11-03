@@ -10,18 +10,21 @@ case Some(text) => {
 case None => { }
 }
 
-<form action="/auth/register" method="post">
-  Name:<br>
-  <input type="text" name="name" value="user1">
+<form class="text-center" action="/auth/register" method="post">
   <br>
-  About:<br>
-  <input type="text" name="about" value="nothing special">
+  <h2>Welcome to News Hub!</h3>
   <br>
-  Email:<br>
-  <input type="text" name="email" value="test@@gmail.com">
-  <br>
-  Password:<br>
-  <input type="text" name="pass" value="123456">
+  <input type="text" placeholder="Name" name="name" value="user1">
+  <br><br>
+  <textarea name="about" cols="40" rows="5">
+    Introduce yourself
+  </textarea>
+  <br><br>
+  <input type="text" placeholder="Email" name="email" value="test@@gmail.com">
+  <br><br>
+  <input type="text" placeholder="Password" name="pass" value="123456">
+  <br><br>
+  <input type="text" placeholder="Retype password" name="pass2" value="123456">
   <br><br>
   <input type="submit" value="Register">
 </form>

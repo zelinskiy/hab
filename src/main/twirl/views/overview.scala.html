@@ -1,0 +1,17 @@
+@import com.hub.data.{Board, Category}
+@import org.squeryl.Query
+
+@()(implicit cats: Query[Category])
+
+@layouts.html.default("Overview"){
+
+<h2>Overview</h2>
+
+<br/>
+<p><a href="/board/subscriptions">Subscriptions</a></p>
+<p><a href="/board/my">My boards</a></p>
+<p><a href="/me">Profile</a></p>
+<p><a href="/auth/login">Login</a></p>
+<p><a href="/auth/register">Register</a></p>
+
+}

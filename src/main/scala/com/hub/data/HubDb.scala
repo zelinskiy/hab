@@ -33,14 +33,23 @@ case class Article(
     HubDb.articlesToUsers.right(this)
 }
 
+object Board {
+  def getOrdering(m: Option[String]) =
+    (b1: Board, b2: Board) => m match {
+      case Some("date") => b1.created.compareTo(b2.created) == 1
+      case _ => b1.id.compareTo(b2.id) == 1
+    }
+}
+
 case class Board(
   val id: Long,
   val categoryId: Long,
   val userId: Long,
   val name: String,
+  val created: Date,
   val imgPath: Option[String])
     extends KeyedEntity[Long]{
-  def this() = this(0,0,0,"",None)
+  def this() = this(0,0,0,"",new Date, None)
   lazy val articles: OneToMany[Article] =
     HubDb.articlesToBoards.left(this)
   lazy val category: ManyToOne[Category] =
@@ -93,13 +102,16 @@ object HubDb extends Schema {
   val users = table[User]
 
   on(articles)(a => declare(
-    a.id is autoIncremented("articles_id_seq")))
+    a.id is autoIncremented("articles_id_seq"),
+    a.body is dbType("TEXT")
+  ))
   on(boards)(b => declare(
     b.id is autoIncremented("boards_id_seq")))
   on(categories)(c => declare(
     c.id is autoIncremented("categories_id_seq"))) 
   on(users)(u => declare(
     u.id is autoIncremented("users_id_seq"),
+    u.about is dbType("TEXT"),
     u.name is unique,
     u.email is unique
   ))

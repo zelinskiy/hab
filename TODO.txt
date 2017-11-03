@@ -2,6 +2,5 @@
 * Split into multiple servlets
 * Photos upload
 * Edit profile
-* Settings
-* Options
 * Return to where I requested after login
+* Layouts for Article, Board, etc.

@@ -1,7 +1,7 @@
-@import com.hub.data.{User, Category}
+@import com.hub.data.{User, Category, Board}
 @import org.squeryl.Query
 
-@(category:Category)(implicit cats: Query[Category])
+@(ordering:(Board, Board) => Boolean, category:Category)(implicit cats: Query[Category])
 
 @layouts.html.default(category.name){
 
@@ -18,17 +18,17 @@
 
 <br/>
 <div class="row">
-@for(b <- category.boards){
+  @for(b <- category.boards.toList.sortWith(ordering)){
+	    
   <div class="col-lg-4">
     <div class="well">
-      @b.imgPath match {
-        case Some(i) => { <img src="/rivendell.jpg" class="img-responsive" alt="Cinque Terre"> }
-        case None => {} }
-    <h3><a href="/board/@b.id">@b.name</a>
+      <img src="/rivendell.jpg" class="img-responsive" alt="Cinque Terre">
+    <h3 class="align-middle text-center"><a href="/board/@b.id">@b.name</a>
       (<a href="/board/@b.id/sub"><i class="fa fa-flag"></i> @b.subscribers.size</a>)
     </h3>
     </div>
-  </div> 
+</div>
+
 }
 </div>
 

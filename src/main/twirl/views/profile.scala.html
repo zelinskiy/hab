@@ -3,8 +3,12 @@
 
 @(me: User)(implicit cats: Query[Category])
 @layouts.html.default("Login to Hub"){
-
-<p>@me.name</p>
-<p>@me.email</p>
+<center>
+  <img src="/user.jpg" class="img-responsive" alt="me">
+  </br>
+  <h2>@me.name</h2>
+  <br/>
+  <p>@me.about</p>
+</center>
 
 }
